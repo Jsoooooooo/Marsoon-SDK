@@ -1,0 +1,177 @@
+name: Publish Marsoon Chart SDK to npm
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: marsoon-sdk-npm-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out compiled SDK repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          package-manager-cache: false
+
+      - name: Use an OIDC-capable npm CLI
+        run: npm install --global npm@11.19.0
+
+      - name: Check whether this version is already published
+        id: registry
+        shell: bash
+        run: |
+          package_spec="$(node --input-type=module -e "import manifest from './package.json' with { type: 'json' }; process.stdout.write(manifest.name + '@' + manifest.version)")"
+          if npm view "$package_spec" version >/dev/null 2>&1; then
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            printf '%s is already published; skipping.\n' "$package_spec"
+          else
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Audit the self-contained npm package
+        if: steps.registry.outputs.publish == 'true'
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import fs from 'node:fs';
+          import { execFileSync } from 'node:child_process';
+
+          const manifest = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          assert.equal(manifest.name, '@cdjustin/chart-sdk');
+          assert.equal(manifest.version, '0.1.9');
+          assert.equal(manifest.main, './runtime/marsoon-chart.js');
+          assert.equal(manifest.types, './runtime/marsoon-chart.d.ts');
+          assert.equal(manifest.publishConfig?.access, 'public');
+          assert.equal(Object.hasOwn(manifest.publishConfig || {}, 'provenance'), false);
+          assert.equal(
+            manifest.repository?.url,
+            'git+https://github.com/Jsoooooooo/Marsoon-SDK.git',
+          );
+
+          const declaration = fs.readFileSync('runtime/marsoon-chart.d.ts', 'utf8');
+          for (const pattern of [
+            /LicenseActivation|activateLicense|syncSubscription|installLicense|clearLicense/,
+            /LicenseEntitlements|LicenseStatus|installationId|installation_id|license_id|user_id/,
+            /refreshToken|licenseToken|refresh_token|license_token/,
+            /licenseEndpoint|authOtpEndpoint|authVerifyEndpoint|authRefreshEndpoint|telemetryEndpoint/,
+            /RuntimeManifest|SdkManifest|ensureChartRuntime|configureManagedSdkRelease|bindingsProvider|\bbindings\b/,
+            /legalVersions|termsAccepted|privacyAcknowledged/,
+          ]) assert.equal(pattern.test(declaration), false, `private API exposed: ${pattern}`);
+
+          const packed = JSON.parse(execFileSync(
+            'npm',
+            ['pack', '--dry-run', '--json', '--ignore-scripts'],
+            { encoding: 'utf8' },
+          ));
+          const files = packed[0].files.map((entry) => entry.path).sort();
+          const sdkManifest = JSON.parse(fs.readFileSync('runtime/sdk-manifest.json', 'utf8'));
+          const runtimeSource = fs.readFileSync(`runtime/${sdkManifest.runtime.js}`, 'utf8');
+          const snippets = [...runtimeSource.matchAll(/["']\.\/(snippets\/rt-[0-9a-f]+\/inline\d+\.js)["']/g)]
+            .map((match) => `runtime/${match[1]}`);
+          assert.deepEqual(files, [
+            'README.md',
+            'SDK_PRIVACY.md',
+            'SDK_TERMS.md',
+            'package.json',
+            'runtime/marsoon-chart.d.ts',
+            'runtime/marsoon-chart.js',
+            'runtime/marsoon-chart-loader.js',
+            `runtime/${sdkManifest.core.js}`,
+            `runtime/${sdkManifest.runtime.js}`,
+            `runtime/${sdkManifest.runtime.wasm}`,
+            'runtime/sdk-manifest.json',
+            ...snippets,
+          ].sort());
+          const entry = fs.readFileSync('runtime/marsoon-chart.js', 'utf8');
+          assert.match(entry, /new URL\('\.\/sdk-manifest\.json', import\.meta\.url\)/);
+          assert.match(entry, /__MARSOON_SDK_BUNDLED_RUNTIME__/);
+          console.log(`Verified self-contained package ${manifest.name}@${manifest.version}`);
+          NODE
+
+      - name: Pack and test a clean browser installation
+        if: steps.registry.outputs.publish == 'true'
+        id: pack
+        shell: bash
+        run: |
+          tarball="$(npm pack --silent)"
+          echo "tarball=$tarball" >> "$GITHUB_OUTPUT"
+          package_tarball="$PWD/$tarball"
+          test_project="$(mktemp -d)"
+          trap 'rm -rf "$test_project"' EXIT
+          cd "$test_project"
+          npm init --yes >/dev/null
+          npm pkg set private=true type=module >/dev/null
+          npm install --ignore-scripts --no-audit --no-fund "$package_tarball"
+          cat > index.html <<'HTML'
+          <!doctype html>
+          <body><canvas id="chart-canvas"></canvas>SDK_SMOKE_PENDING</body>
+          <script type="module">
+            try {
+              const sdk = await import('/node_modules/@cdjustin/chart-sdk/runtime/marsoon-chart.js');
+              if (sdk.MarsoonChart?.version !== '0.1.9') throw new Error('SDK_SMOKE_BAD_VERSION');
+              const chart = await sdk.MarsoonChart.mount({ activation: false, telemetryEndpoint: null });
+              if (chart.state !== 'ready') throw new Error('SDK_SMOKE_RUNTIME_NOT_READY');
+              chart.destroy();
+              document.body.textContent = 'SDK_SMOKE_OK';
+            } catch (error) {
+              document.body.textContent = `SDK_SMOKE_ERROR: ${error?.stack || error}`;
+            }
+          </script>
+          HTML
+          python3 -m http.server 4173 --bind 127.0.0.1 >server.log 2>&1 &
+          server_pid="$!"
+          trap 'kill "$server_pid" 2>/dev/null || true; rm -rf "$test_project"' EXIT
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:4173/ >/dev/null; then
+              break
+            fi
+            sleep 0.2
+          done
+          curl --fail --silent http://127.0.0.1:4173/ >/dev/null
+          browser="$(command -v google-chrome || command -v chromium || true)"
+          test -n "$browser"
+          rendered="$($browser --headless=new --no-sandbox --disable-dev-shm-usage \
+            --virtual-time-budget=15000 --dump-dom http://127.0.0.1:4173/ 2>browser.log)"
+          if ! grep --quiet 'SDK_SMOKE_OK' <<<"$rendered"; then
+            printf '%s\n' "$rendered"
+            cat browser.log
+            exit 1
+          fi
+
+      - name: Publish with npm Trusted Publishing
+        if: steps.registry.outputs.publish == 'true'
+        run: npm publish --access public --provenance
+
+      - name: Verify registry provenance
+        if: steps.registry.outputs.publish == 'true'
+        shell: bash
+        run: |
+          package_name="$(node --input-type=module -e "import manifest from './package.json' with { type: 'json' }; process.stdout.write(manifest.name)")"
+          package_version="$(node --input-type=module -e "import manifest from './package.json' with { type: 'json' }; process.stdout.write(manifest.version)")"
+          package_spec="${package_name}@${package_version}"
+          for attempt in {1..30}; do
+            attestations="$(npm view "$package_spec" dist.attestations --json 2>/dev/null || true)"
+            if grep --quiet 'slsa.dev/provenance/v1' <<<"$attestations"; then
+              printf 'Verified provenance for %s\n' "$package_spec"
+              exit 0
+            fi
+            sleep 2
+          done
+          printf 'Missing provenance attestation for %s\n' "$package_spec" >&2
+          exit 1

@@ -1,0 +1,43 @@
+{
+  "name": "@cdjustin/chart-sdk",
+  "version": "0.1.9",
+  "description": "Browser chart SDK loader for the managed Marsoon JavaScript/WASM runtime",
+  "license": "SEE LICENSE IN SDK_TERMS.md",
+  "keywords": [
+    "chart",
+    "finance",
+    "trading",
+    "wasm"
+  ],
+  "type": "module",
+  "main": "./runtime/marsoon-chart.js",
+  "types": "./runtime/marsoon-chart.d.ts",
+  "exports": {
+    ".": {
+      "types": "./runtime/marsoon-chart.d.ts",
+      "import": "./runtime/marsoon-chart.js"
+    }
+  },
+  "sideEffects": true,
+  "files": [
+    "runtime/marsoon-chart.js",
+    "runtime/marsoon-chart-loader.js",
+    "runtime/marsoon-chart.d.ts",
+    "runtime/sdk-manifest.json",
+    "runtime/marsoon-chart-core-*.js",
+    "runtime/marsoon-chart-runtime-*.js",
+    "runtime/marsoon-chart-runtime-*_bg.wasm",
+    "runtime/snippets/",
+    "README.md",
+    "SDK_TERMS.md",
+    "SDK_PRIVACY.md"
+  ],
+  "homepage": "https://github.com/Jsoooooooo/Marsoon-SDK#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jsoooooooo/Marsoon-SDK.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

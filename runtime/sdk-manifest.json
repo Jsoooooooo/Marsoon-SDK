@@ -1,0 +1,32 @@
+{
+  "manifestVersion": 2,
+  "apiVersion": "marsoon.chart.sdk.v1",
+  "sdkVersion": "0.1.9",
+  "releaseId": "0.1.9+8949a1026e688ad2.2040cef83f53de79.6db7663e57c8dcc1",
+  "core": {
+    "js": "marsoon-chart-core-8949a1026e688ad2.js",
+    "sha256": "8949a1026e688ad293aac17782d4bb6d61f1f721155897576cc42e0aa9a62ac7",
+    "bytes": 73806
+  },
+  "runtime": {
+    "js": "marsoon-chart-runtime-2040cef83f53de79.js",
+    "wasm": "marsoon-chart-runtime-6db7663e57c8dcc1_bg.wasm",
+    "sha256": {
+      "js": "2040cef83f53de79a75e833d86b55bc3d0df3432f5fdf74e2a956bca0f0bd558",
+      "wasm": "6db7663e57c8dcc1c39ef74c35ab335b887420711f70bff5abcc173615ccae26"
+    },
+    "bytes": {
+      "js": 35754,
+      "wasm": 8663894
+    }
+  },
+  "releaseSequence": 1788439339889,
+  "issuedAt": "2026-09-03T12:42:19.889Z",
+  "expiresAt": "2026-10-03T12:42:19.889Z",
+  "signature": {
+    "version": 1,
+    "algorithm": "Ed25519",
+    "keyId": "ed25519-f1f20b47c42e823f",
+    "value": "7JguR26bY0yx/rHwJyTJotMrcHrH+qhMgOcKKbTk65As1xpXf7aQ9Epve74f4DgLdb8t7d3iezuSZ6oPcsI7Dw=="
+  }
+}
