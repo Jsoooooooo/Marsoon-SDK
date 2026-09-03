@@ -14,58 +14,6 @@ npm install @cdjustin/chart-sdk
 import { MarsoonChart } from '@cdjustin/chart-sdk';
 ```
 
-npm 包自带稳定入口、TypeScript 类型、签名 manifest、Core、Runtime、WASM 和
-运行时 snippets。安装完成后，SDK 资源全部从当前应用的 `node_modules`/打包产物
-加载；首次加载不依赖 GitHub Pages。行情、鉴权等宿主接口仍由接入方自行提供。
-
-不使用构建工具时，请从锁定版本的 npm 包复制完整 `runtime/` 目录到自己的站点，
-不要只复制入口文件：
-
-```html
-<canvas id="chart-canvas"></canvas>
-<script type="module">
-  import { MarsoonChart } from '/vendor/marsoon-chart/runtime/marsoon-chart.js';
-
-  // 宿主自行实现；connect() 返回一条共享 WebSocket 会话。
-  const dataSocket = createHostMarketDataSocket();
-
-  const chart = await MarsoonChart.mount({
-    runtimeUpdatePolicy: 'reload',
-    dataSocket,
-    // 可选：由宿主后端持有 Refresh Token，只向 SDK 返回短期 Access Token。
-    getAccessToken: async () => {
-      const response = await fetch('/api/marsoon-sdk/access-token', {
-        credentials: 'include',
-      });
-      if (!response.ok) throw new Error(`Access token HTTP ${response.status}`);
-      return (await response.json()).access_token;
-    },
-  });
-
-  chart.configure({
-    symbol: {
-      symbol: 'ORION-PERP',
-      exchange: 'NOVA',
-      display_name: '示例标的',
-      tick_size: 0.01,
-      price_precision: 2,
-      timezone: 'UTC',
-    },
-    timeframe_seconds: 60,
-    chart_type: 'candlesticks',
-  });
-</script>
-```
-
-不要直接从 GitHub Pages 引入可变入口。npm lockfile 固定包版本，包内入口会验证
-签名 manifest 以及 Core/Runtime/WASM 的哈希；升级 SDK 时应更新 npm 版本并重新构建应用。
-GitHub Pages 仅作为开源仓库的在线演示与镜像，不是 npm 安装后的运行依赖。
-
-SDK 启动后会单独读取远程签名发布清单以检查版本。该请求只读取版本元数据，
-不会下载或执行远程 Core、Runtime 或 WASM。发现新版时，npm 版本会在 SDK 内弹窗
-提示项目维护者执行升级命令并重新构建部署；浏览器不会修改 `node_modules`，也不会
-把页面刷新伪装成已经升级。关闭提示后，同一版本将在 24 小时后再次提醒。
-
 ## macOS / Windows 一键本地运行
 
 要求安装 [Node.js 18 或更高版本](https://nodejs.org/)，克隆 GitHub 仓库后：
