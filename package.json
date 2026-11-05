@@ -1,7 +1,7 @@
 {
   "name": "@cdjustin/chart-sdk",
   "version": "0.2.0",
-  "description": "Marsoon A-share chart SDK with built-in AppKey authorization",
+  "description": "Marsoon chart SDK with built-in AppKey authorization",
   "license": "UNLICENSED",
   "keywords": [
     "chart",
