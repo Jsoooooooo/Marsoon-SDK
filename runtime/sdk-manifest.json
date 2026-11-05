@@ -1,30 +1,30 @@
 {
   "manifestVersion": 2,
   "apiVersion": "marsoon.chart.sdk.v1",
-  "sdkVersion": "0.2.0",
-  "releaseId": "0.2.0+5aacaaff572a601c.2d635ff18da39902.9d58cb78a5a743f9",
+  "sdkVersion": "0.2.1",
+  "releaseId": "0.2.1+236573a5d926a388.abe44b25aaa492e7.11b1ba2007d31cac",
   "core": {
-    "js": "marsoon-chart-core-5aacaaff572a601c.js",
-    "sha256": "5aacaaff572a601ce6ba7b5021a842fdbd201eb1c6a043cb5de482966f9beac3",
-    "bytes": 95494
+    "js": "marsoon-chart-core-236573a5d926a388.js",
+    "sha256": "236573a5d926a388ecda9ba0e458a7e8cc3b1be00a49f225e99aa180d4e9c7f8",
+    "bytes": 100837
   },
   "runtime": {
-    "js": "marsoon-chart-runtime-2d635ff18da39902.js",
-    "wasm": "marsoon-chart-runtime-9d58cb78a5a743f9_bg.wasm",
+    "js": "marsoon-chart-runtime-abe44b25aaa492e7.js",
+    "wasm": "marsoon-chart-runtime-11b1ba2007d31cac_bg.wasm",
     "sha256": {
-      "js": "2d635ff18da39902d635fa03876f39954d6eee724d518a74684bf5bcc0bd79b1",
-      "wasm": "9d58cb78a5a743f9294fa9e705d9acd12e2398585503f1d9a185a4482b10e856"
+      "js": "abe44b25aaa492e79705ab91e7698510bfa39dc1d7d1139ed2d82474a79e6092",
+      "wasm": "11b1ba2007d31cac7bb3f662a82f2477e8ac30441d0e76a116498b05a6c063f7"
     },
     "bytes": {
-      "js": 34901,
-      "wasm": 10769686
+      "js": 34906,
+      "wasm": 10769525
     }
   },
   "protection": {
     "version": 1,
-    "buildId": "cccb8bd9ab68d746d98cc997",
-    "customerTag": "cust-21705aff41168d543b41be71b95fe59f",
-    "binding": "af9fe4300e29e7428c28da65ba7678a0c9bc03ceae72f89689b33e8b05858e1e",
+    "buildId": "02238164eef40205a3d308f6",
+    "customerTag": "cust-5e403b251b3a72000351e8158ea59b2b",
+    "binding": "e502aacec09adfdb57c636fa1693c33f8da476ea8e379544b12565af4c41d4b0",
     "runtime": "private-module-v1",
     "javascript": "bundled-signed-v1",
     "vm": "randomized-cold-policy-v3",
@@ -32,46 +32,46 @@
     "abi": {
       "version": 3,
       "exports": {
-        "bootstrap": "rb111f6ac4016162d",
-        "control": "r38c22e6ed690c2c7",
-        "json": "r845f2a76a593cd27",
-        "binary": "r9a68ceae2df8620e",
-        "events": "redfddbe3e94ae396"
+        "bootstrap": "rc0646b754e785bcb",
+        "control": "rae32adfb9eabc6e7",
+        "json": "r3a168659e34e7521",
+        "binary": "r6d65075efb1b79f9",
+        "events": "r159efba47647f0d1"
       },
       "ingress": {
-        "replaceCandles": 1404567599,
-        "appendCandles": 1122443250,
-        "replaceFootprints": 1950023237,
-        "appendFootprints": 73145265,
-        "replaceCvds": 984591334,
-        "appendCvds": 539240603,
-        "replaceTrades": 994716227,
-        "appendTrades": 294445499,
-        "replaceSeries": 256378463,
-        "appendSeries": 1691664380,
-        "control": 986317920,
-        "replaceTradesBinary": 991848338,
-        "appendTradesBinary": 1501403448
+        "replaceCandles": 369607657,
+        "appendCandles": 591764313,
+        "replaceFootprints": 1378248762,
+        "appendFootprints": 1205614301,
+        "replaceCvds": 1257428369,
+        "appendCvds": 936597993,
+        "replaceTrades": 88814771,
+        "appendTrades": 1567230919,
+        "replaceSeries": 1552092476,
+        "appendSeries": 2005077994,
+        "control": 1433392672,
+        "replaceTradesBinary": 1026667164,
+        "appendTradesBinary": 1305447285
       },
       "control": {
-        "authorizationBegin": 922647804,
-        "authorizationStatus": 1730735233,
-        "authorizationAccept": 1857318642,
-        "authorizationBlock": 80527800,
-        "update": 1126119630,
-        "ingressStatus": 227062157
+        "authorizationBegin": 2125305301,
+        "authorizationStatus": 1048814827,
+        "authorizationAccept": 2039797697,
+        "authorizationBlock": 2039999656,
+        "update": 64580235,
+        "ingressStatus": 754490121
       }
     },
-    "abiBinding": "02b5c99977068592fba3d91f03c18e20788b2787655e6ae15448a46769b43912",
+    "abiBinding": "023da4e20c4f78f4c3245426bbb1ccb2cb3aa66763bf85c6f9ad5e47c9189a9a",
     "strings": "per-entry-lazy-v2"
   },
-  "releaseSequence": 1793908723213,
-  "issuedAt": "2026-11-05T19:58:43.213Z",
-  "expiresAt": "2026-12-05T19:58:43.213Z",
+  "releaseSequence": 1793912550399,
+  "issuedAt": "2026-11-05T21:02:30.399Z",
+  "expiresAt": "2026-12-05T21:02:30.399Z",
   "signature": {
     "version": 1,
     "algorithm": "Ed25519",
     "keyId": "ed25519-f1f20b47c42e823f",
-    "value": "x5HbTopcw6tnL7ft/7atC/Y/GWCVjSsWJc+aA/pMjMoIZm2viG3cGGqmFY91IMJJ03XKTvbhun1d+op/ewAqBQ=="
+    "value": "vlcNG9jhM2XBTmcmCL2bJE4jsb5QMncW2RKvvghYkPOly8vvYuA5VVzLNnen7+K11OosAFaAcoM4a34/wjb3Bg=="
   }
 }

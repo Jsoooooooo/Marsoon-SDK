@@ -406,38 +406,16 @@ export class MarsoonChart extends EventTarget {
 }
 export default MarsoonChart;
 export type HeatmapInteger = number | bigint | string;
-export interface MarketDepth {
-    side: 'Bid' | 'Ask';
-    price_ticks: HeatmapInteger;
-    volume: number;
-    orders_count?: number | null;
-}
+export type DepthLevel = [
+    price: number,
+    quantity: number
+];
 export interface DepthUpdate {
-    connection: string;
-    pair: {
-        exchange: string;
-        symbol: string;
-    };
-    provider: string;
-    venue: string;
-    instrument_id: string;
-    tick_size: number;
-    reference_price?: number | null;
-    event_time_ns: HeatmapInteger;
-    receive_time_ns: HeatmapInteger;
-    observation?: {
-        event_time_ns: HeatmapInteger;
-        receive_time_ns: HeatmapInteger;
-    } | null;
-    publisher_sequence: HeatmapInteger;
-    source_sequence?: HeatmapInteger | null;
-    channel_id: number;
-    book_epoch: HeatmapInteger;
-    event_group_id: HeatmapInteger;
-    flags: HeatmapInteger;
-    source_depth: 0 | 1 | 2 | 3;
+    timestamp_ms: number;
+    sequence: HeatmapInteger;
     kind: 'Snapshot' | 'Delta' | 'Reset' | 'Gap';
-    levels: MarketDepth[];
+    bids: DepthLevel[];
+    asks: DepthLevel[];
 }
 export interface HeatmapWidgetHandle {
     readonly id: string;

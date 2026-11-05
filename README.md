@@ -5,7 +5,7 @@
 ## 安装
 
 ```bash
-npm install @cdjustin/chart-sdk@0.2.0
+npm install @cdjustin/chart-sdk@0.2.1
 ```
 
 ## 初始化与鉴权
@@ -123,44 +123,48 @@ const heatmap = chart.openWidget({ id: 'orderbook', type: 'orderbook_heatmap' })
 
 ### 盘口深度消息
 
+0.2.1 起只需传递事件时间、连续序号、更新类型和买卖价档。品种及最小价位复用 `chart.configure()` 的设置，接收时间、连接和会话信息由 SDK 管理。
+
 ```ts
 handlers.onMessage({
   kind: 'realtime',
   stream: 'depth',
   depth: [{
-    connection: 'market-connection-1',
-    pair: { exchange: 'YOUR_EXCHANGE', symbol: 'YOUR_SYMBOL' },
-    provider: 'YOUR_PROVIDER',
-    venue: 'YOUR_VENUE',
-    instrument_id: 'YOUR_INSTRUMENT',
-    tick_size: 0.01,
-    event_time_ns: '1793900000000000000',
-    receive_time_ns: '1793900000001000000',
-    publisher_sequence: '1',
-    channel_id: 1,
-    book_epoch: '1',
-    event_group_id: '1',
-    flags: '0',
-    source_depth: 2,
+    timestamp_ms: 1793900000000,
+    sequence: 1,
     kind: 'Snapshot',
-    levels: [
-      { side: 'Bid', price_ticks: '10000', volume: 800 },
-      { side: 'Ask', price_ticks: '10001', volume: 600 },
-    ],
+    bids: [[100.00, 800]],
+    asks: [[100.01, 600]],
   }],
 });
 ```
 
-当前版本中，`orders_count`、`reference_price`、`observation` 和 `source_sequence` 可省略；示例中的其余深度字段仍需提供。
+每个价档为 `[实际价格, 数量]`，价格必须对齐配置的 `tick_size`，数量不得为负。时间为 UTC Unix 毫秒整数，`sequence` 可为安全整数、bigint 或十进制字符串；大序号通过 JSON 传输时使用字符串。
 
-- `pair.exchange`、`pair.symbol`、`tick_size` 与图表品种保持一致。
-- `provider`、`venue`、`instrument_id` 是数据源身份，不能在同一个来源会话中随意切换。
-- `price_ticks` 是整数价位，实际价格为 `price_ticks × tick_size`。
-- `Snapshot` 建立或替换盘口；`Delta` 的 volume 是价档更新后的绝对量，0 表示删除，不是增减量。
-- 先发 `Snapshot`，再发 `Delta` 和成交。重连、`Reset` 或 `Gap` 后重新同步快照。
-- 同一盘口 epoch 内 `publisher_sequence` 递增，重复或旧序号不会当作新更新。
-- 纳秒时间、64 位序号及价位可以使用 bigint 或十进制字符串；JSON 传输使用字符串，避免 JavaScript 数字精度损失。
-- `source_depth` 按实际数据能力填写：0 为未知，1 为最优买卖价（BBO），2 为按价位聚合盘口（MBP），3 为逐笔委托盘口（MBO）；不是盘口价档数量。
+- `Snapshot` 替换整个盘口，先发送快照，再发送增量和成交。
+- `Delta` 只更新指定价档。数量是更新后的绝对量，0 表示删除；没有变化的一侧传空数组。
+- `sequence` 是当前连接内连续递增的交付序号。SDK 忽略重复或旧序号；增量跳号后暂停使用旧盘口，等待新快照。
+- 断线重连后必须重新发送 `Snapshot`，新连接可从新的序号起点开始。
+- 数据源主动重置时发送 `kind: 'Reset'`，发现上游数据缺口时发送 `kind: 'Gap'`；两者的 `bids`、`asks` 均为空数组，随后重新发送快照。
+- 适配器负责检查上游数据完整性；自行生成交付序号不能证明上游没有丢包。
+
+例如将买一数量改成 500、删除卖一：
+
+```ts
+handlers.onMessage({
+  kind: 'realtime',
+  stream: 'depth',
+  depth: [{
+    timestamp_ms: 1793900000100,
+    sequence: 2,
+    kind: 'Delta',
+    bids: [[100.00, 500]],
+    asks: [[100.01, 0]],
+  }],
+});
+```
+
+SDK 通过 `error` 事件的 `event.detail.code === 'heatmap_snapshot_required'` 通知接入方重新提供快照。深度流不使用 `requestRange`；接入方按自己的后端协议获取并交付新快照。恢复前暂停向热力图投递成交。
 
 ### 热力图成交消息
 
