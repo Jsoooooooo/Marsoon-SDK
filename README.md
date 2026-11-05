@@ -1,4 +1,4 @@
-# Marsoon Chart SDK（A 股版）
+# Marsoon Chart SDK
 
 浏览器图表组件，支持 K 线、足迹、指标、实时盘口热力图和数据可视化。行情由接入方提供，SDK 不包含行情服务。
 
@@ -28,7 +28,7 @@ chart.configure({
     display_name: '示例品种',
     tick_size: 0.01,
     price_precision: 2,
-    timezone: 'Asia/Shanghai',
+    timezone: 'UTC',
   },
   timeframe_seconds: 60,
   chart_type: 'candlesticks',
@@ -144,12 +144,14 @@ handlers.onMessage({
     source_depth: 2,
     kind: 'Snapshot',
     levels: [
-      { side: 'Bid', price_ticks: '10000', volume: 800, orders_count: null },
-      { side: 'Ask', price_ticks: '10001', volume: 600, orders_count: null },
+      { side: 'Bid', price_ticks: '10000', volume: 800 },
+      { side: 'Ask', price_ticks: '10001', volume: 600 },
     ],
   }],
 });
 ```
+
+当前版本中，`orders_count`、`reference_price`、`observation` 和 `source_sequence` 可省略；示例中的其余深度字段仍需提供。
 
 - `pair.exchange`、`pair.symbol`、`tick_size` 与图表品种保持一致。
 - `provider`、`venue`、`instrument_id` 是数据源身份，不能在同一个来源会话中随意切换。
@@ -173,7 +175,7 @@ handlers.onMessage({
     side: 'buy',
     sequence: 2,
     trade_id: 'YOUR_TRADE_ID',
-    quantity_unit: 'shares',
+    quantity_unit: 'units',
     granularity: 'individual',
     side_source: 'provider_native',
   }],
@@ -200,7 +202,7 @@ heatmap.pushTrades(trades);
 
 ## 指标、配置和销毁
 
-A 股版包含通用指标，以及强势趋势监控、大单聚集、自定义涨跌幅。图表设置和绘图由 SDK 管理，数据历史是否完整取决于接入方实际提供的数据。
+支持指标叠加、图表配置和绘图。数据历史是否完整取决于接入方实际提供的数据。
 
 ```ts
 chart.setTimeframe(300);
