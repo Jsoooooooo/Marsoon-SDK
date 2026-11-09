@@ -5,7 +5,7 @@
 ## 安装
 
 ```bash
-npm install @cdjustin/chart-sdk@0.2.2
+npm install @cdjustin/chart-sdk@0.2.3
 ```
 
 ## 初始化与鉴权

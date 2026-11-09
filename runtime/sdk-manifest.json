@@ -1,30 +1,30 @@
 {
   "manifestVersion": 2,
   "apiVersion": "marsoon.chart.sdk.v1",
-  "sdkVersion": "0.2.2",
-  "releaseId": "0.2.2+f1d4de0aa4b0cdde.abe44b25aaa492e7.11b1ba2007d31cac",
+  "sdkVersion": "0.2.3",
+  "releaseId": "0.2.3+1840b0864e3ea5d8.476bf080e484b3fa.a65ca345cb6c68d0",
   "core": {
-    "js": "marsoon-chart-core-f1d4de0aa4b0cdde.js",
-    "sha256": "f1d4de0aa4b0cdde9ac45490a126581a4340c87b7f294e30dfd8ad6afb91c4b8",
-    "bytes": 100770
+    "js": "marsoon-chart-core-1840b0864e3ea5d8.js",
+    "sha256": "1840b0864e3ea5d8cec5b993be5e9c21f503d4967f5b6c8d5f0ee2b0f344abb0",
+    "bytes": 100736
   },
   "runtime": {
-    "js": "marsoon-chart-runtime-abe44b25aaa492e7.js",
-    "wasm": "marsoon-chart-runtime-11b1ba2007d31cac_bg.wasm",
+    "js": "marsoon-chart-runtime-476bf080e484b3fa.js",
+    "wasm": "marsoon-chart-runtime-eab29cf80808093-a65ca345cb6c68d0_bg.wasm",
     "sha256": {
-      "js": "abe44b25aaa492e79705ab91e7698510bfa39dc1d7d1139ed2d82474a79e6092",
-      "wasm": "11b1ba2007d31cac7bb3f662a82f2477e8ac30441d0e76a116498b05a6c063f7"
+      "js": "476bf080e484b3fa59c0a710a82c80583767aa184f4d6013fb58b87100de40df",
+      "wasm": "a65ca345cb6c68d01db2d22b470425e15b7a8e900da8fd65dfc5c3969bc69789"
     },
     "bytes": {
-      "js": 34906,
-      "wasm": 10769525
+      "js": 36689,
+      "wasm": 10767402
     }
   },
   "protection": {
     "version": 1,
-    "buildId": "02238164eef40205a3d308f6",
-    "customerTag": "cust-5e403b251b3a72000351e8158ea59b2b",
-    "binding": "e502aacec09adfdb57c636fa1693c33f8da476ea8e379544b12565af4c41d4b0",
+    "buildId": "e08d898cb15922c92dfcefdc",
+    "customerTag": "cust-0dd97a89505f9ebcfc400820c2ec7237",
+    "binding": "aed5279e137e2dd7b0a1d378763b8f6f6977e59d339e0d71ee4b6aaacd5b170b",
     "runtime": "private-module-v1",
     "javascript": "bundled-signed-v1",
     "vm": "randomized-cold-policy-v3",
@@ -32,42 +32,42 @@
     "abi": {
       "version": 3,
       "exports": {
-        "bootstrap": "rc0646b754e785bcb",
-        "control": "rae32adfb9eabc6e7",
-        "json": "r3a168659e34e7521",
-        "binary": "r6d65075efb1b79f9",
-        "events": "r159efba47647f0d1"
+        "bootstrap": "r7de0154461afdd70",
+        "control": "r46255419781ccf05",
+        "json": "r81d7106e9c33c711",
+        "binary": "rf9c4a615e2e9329c",
+        "events": "r63ea6dd0c768cf2e"
       },
       "ingress": {
-        "replaceCandles": 369607657,
-        "appendCandles": 591764313,
-        "replaceFootprints": 1378248762,
-        "appendFootprints": 1205614301,
-        "replaceCvds": 1257428369,
-        "appendCvds": 936597993,
-        "replaceTrades": 88814771,
-        "appendTrades": 1567230919,
-        "replaceSeries": 1552092476,
-        "appendSeries": 2005077994,
-        "control": 1433392672,
-        "replaceTradesBinary": 1026667164,
-        "appendTradesBinary": 1305447285
+        "replaceCandles": 74325615,
+        "appendCandles": 381542541,
+        "replaceFootprints": 968330008,
+        "appendFootprints": 1129406164,
+        "replaceCvds": 593327126,
+        "appendCvds": 1780230844,
+        "replaceTrades": 399104608,
+        "appendTrades": 1321750566,
+        "replaceSeries": 816822601,
+        "appendSeries": 412674810,
+        "control": 1369704058,
+        "replaceTradesBinary": 1326277979,
+        "appendTradesBinary": 1845971447
       },
       "control": {
-        "authorizationBegin": 2125305301,
-        "authorizationStatus": 1048814827,
-        "authorizationAccept": 2039797697,
-        "authorizationBlock": 2039999656,
-        "update": 64580235,
-        "ingressStatus": 754490121
+        "authorizationBegin": 315034201,
+        "authorizationStatus": 2110839666,
+        "authorizationAccept": 2142323609,
+        "authorizationBlock": 531385606,
+        "update": 2014955455,
+        "ingressStatus": 1313820851
       }
     },
-    "abiBinding": "023da4e20c4f78f4c3245426bbb1ccb2cb3aa66763bf85c6f9ad5e47c9189a9a",
+    "abiBinding": "1d25e33ae344e82a2cf4770bf12025ce2968a64a9671bfbde2ea64f9de30f5ff",
     "strings": "per-entry-lazy-v2"
   },
-  "releaseSequence": 1794233072791,
-  "issuedAt": "2026-11-09T14:04:32.791Z",
-  "expiresAt": "2026-12-09T14:04:32.791Z",
+  "releaseSequence": 1794244578473,
+  "issuedAt": "2026-11-09T17:16:18.473Z",
+  "expiresAt": "2026-12-09T17:16:18.473Z",
   "heatmap": {
     "manifest": "heatmap-runtime/bundle-manifest.json",
     "sha256": "ad0f769537e658146a5c7815c7bbc01bf01ad02510f48ff33c73613b71511f18"
@@ -76,6 +76,6 @@
     "version": 1,
     "algorithm": "Ed25519",
     "keyId": "ed25519-f1f20b47c42e823f",
-    "value": "aTf/+MPq5qz+4x/5siZV/B7QiGqwltCJz5g1os0RLBVQON9XqDddbMhsQsMvN904RXYf+/02/o5R+KVjaMXDBQ=="
+    "value": "scMoXwloNENI89VS3IMrxaX+U4v3rnJ0jvK1pjXAwenq9EhQax3DwmVWxpj5hFvnQgckXu9uCC7sfyqfqeDcAA=="
   }
 }
