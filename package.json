@@ -1,6 +1,6 @@
 {
   "name": "@cdjustin/chart-sdk",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Marsoon chart SDK with built-in AppKey authorization",
   "license": "UNLICENSED",
   "keywords": [
@@ -26,7 +26,8 @@
     "runtime/sdk-manifest.json",
     "runtime/marsoon-chart-core-*.js",
     "runtime/marsoon-chart-runtime-*.js",
-    "runtime/marsoon-chart-runtime-*_bg.wasm"
+    "runtime/marsoon-chart-runtime-*_bg.wasm",
+    "runtime/heatmap-runtime/**"
   ],
   "homepage": "https://github.com/Jsoooooooo/Marsoon-SDK#readme",
   "repository": {

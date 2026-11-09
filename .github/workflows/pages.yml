@@ -30,6 +30,7 @@ jobs:
           runtime_js="$(node -p "require('./runtime/sdk-manifest.json').runtime.js")"
           runtime_wasm="$(node -p "require('./runtime/sdk-manifest.json').runtime.wasm")"
           cp runtime/sdk-manifest.json "runtime/$core_js" "runtime/$runtime_js" "runtime/$runtime_wasm" _site/runtime/
+          cp -R runtime/heatmap-runtime _site/runtime/
           test ! -e _site/runtime/marsoon-chart.js
           test ! -e _site/runtime/marsoon-chart-loader.js
           test ! -e _site/runtime/runtime-manifest.json

@@ -40,7 +40,7 @@ jobs:
           publish_dir="$RUNNER_TEMP/marsoon-sdk-publish"
           mkdir -p "$publish_dir/runtime"
           cp package.json "$publish_dir/package.json"
-          cp runtime/* "$publish_dir/runtime/"
+          cp -R runtime/. "$publish_dir/runtime/"
           tarball="$(npm pack "$publish_dir" --silent --ignore-scripts --pack-destination "$RUNNER_TEMP")"
           echo "tarball=$RUNNER_TEMP/$tarball" >> "$GITHUB_OUTPUT"
       - name: Publish runtime package
