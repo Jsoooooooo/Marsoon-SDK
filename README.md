@@ -5,7 +5,7 @@
 ## 安装
 
 ```bash
-npm install @cdjustin/chart-sdk@0.2.1
+npm install @cdjustin/chart-sdk@0.2.2
 ```
 
 ## 初始化与鉴权
@@ -107,7 +107,7 @@ handlers.onMessage({
 
 盘口热力图的类型是 `orderbook_heatmap`，与矩阵数据图 `heatmap` 不同。
 
-盘口热力图复用配套的热图渲染资源。宿主部署这些运行资源后，通过绝对目录 URL 指定位置：
+0.2.2 起，npm 包的 `runtime/heatmap-runtime/` 自带热力图 JS、Worker、字体和引擎 WASM。将完整 `runtime/` 目录随应用发布，默认即可加载。需要自定义部署位置时，通过绝对目录 URL 指定：
 
 ```ts
 const chart = await MarsoonChart.mount({
