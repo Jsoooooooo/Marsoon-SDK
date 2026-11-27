@@ -7,7 +7,7 @@
 ## 安装
 
 ```bash
-npm install @cdjustin/chart-sdk@0.2.3
+npm install @cdjustin/chart-sdk@0.2.4
 ```
 
 ## 初始化与鉴权
@@ -211,10 +211,45 @@ heatmap.pushTrades(trades);
 支持指标叠加、图表配置和绘图。数据历史是否完整取决于接入方实际提供的数据。
 
 ```ts
-chart.setTimeframe(300);
-chart.setFootprintSettings({ mode: 'delta', show_bin_text: true });
+chart.setTimeframe(604_800);
+chart.setFootprintSettings({
+  display: 'aligned', aligned_mode: 'delta_volume', aligned_delta_bid_ask: true,
+  enable_imbalance: true, stacked_imbalance_levels: 5,
+});
 chart.addEventListener('error', event => console.error(event.detail.message));
 chart.destroy();
 ```
+
+周线、月线和年线的 `timeframe_seconds` 分别为 `604800`、`2629800` 和 `31536000`。接入方按交易市场的日历生成各周期数据和实际开盘时间。同一根 K 线的足迹和 CVD 使用相同的 `unix`。
+
+足迹支持 `profile`（足迹分布）、`cluster`（足迹簇）和 `aligned`（档位足迹）。在足迹分布和足迹簇中，用 `delta_volume` 同时显示买卖差和成交量。
+
+## 读取指标数据
+
+`getIndicatorData()` 读取当前选中图表已经加载的行情。图上有该指标时使用当前参数（`source: 'chart'`）。也可以直接读取默认参数结果（`source: 'default'`）。
+
+```ts
+const macd = await chart.getIndicatorData('macd', { limit: 100 });
+console.log(macd.points.at(-1)?.values.histogram);
+
+const { profile } = await chart.getIndicatorData('enhanced_chip_peak');
+console.log(profile?.poc_price_low, profile?.large_print_percent, profile?.rows);
+```
+
+逐 K 线指标支持 `from`（含）和 `to`（不含），单位为 Unix 秒。`limit` 默认 500，最多 2,000 条。点按时间升序排列，`final` 表示对应 K 线是否收盘，缺少输入或预热不足的值为 `null`。
+
+| 指标 ID | `values` 字段 |
+| --- | --- |
+| `sma`、`ema`、`atr` | `value` |
+| `rsi` | `rsi`、`average` |
+| `macd` | `macd`、`signal`、`histogram` |
+| `bollinger_bands` | `middle`、`upper`、`lower` |
+| `kdj` | `k`、`d`、`j` |
+| `session_vwap` | `vwap`、`upper`、`lower` |
+| `volume` | `total`、`buy`、`sell`、`unknown` |
+| `volume_delta` | `delta` |
+| `cvd` | `cvd` |
+
+加强筹码峰依据图上的回看根数和每行 Tick 聚合足迹数据。返回 POC、价值区边界和大单占比，每个价位区间含成交量、买卖差、稳定筹码量和核心大单量。价位行按价格升序排列。窗口内缺少足迹时，`profile` 为 `null`。
 
 接口完整类型随包提供。此 SDK 为专有组件，使用及商业分发需取得 Marsoon 授权。
