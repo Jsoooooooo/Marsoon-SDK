@@ -1,14 +1,22 @@
 export type ChartType = 'candlesticks' | 'line' | 'heikin_ashi' | 'ohlc' | 'footprint';
 export type TradeSide = 'buy' | 'sell';
-export type FootprintMode = 'delta' | 'standard';
+export type FootprintMode = 'delta' | 'standard' | 'volume' | 'delta_volume' | 'bid_ask_volume';
+export type FootprintDisplay = 'profile' | 'cluster' | 'aligned';
+export type AlignedFootprintMode = 'bid_ask' | 'delta' | 'volume' | 'delta_volume' | 'volume_bid_ask';
 export type FootprintScale = 'candle' | 'visible_range' | 'daily' | 'weekly';
 export type ChartLayerId = 'price' | 'ohlc' | 'footprint' | 'volume' | 'volume_profile' | 'session' | 'rsi' | 'macd' | 'sma' | 'ema' | 'ehlers_instantaneous_trend' | 'fvg' | 'supply_demand' | 'absorption' | 'obv' | 'kdj' | 'bollinger_bands' | 'atr' | 'session_vwap' | 'dmi_adx' | 'mfi' | 'juice' | 'session_volume_profile' | 'volume_delta' | 'cvd' | 'bar_statistics' | 'volume_bubble' | 'enhanced_chip_peak' | 'cci' | 'williams_r' | 'parabolic_sar' | 'ichimoku' | 'hma' | 'kama' | 'vwma' | 'zig_zag' | 'initial_balance' | 'unfinished_auction' | 'relative_volume' | 'donchian' | 'super_trend' | 'keltner_channel' | 'squeeze_momentum' | 'll_main_force_monitor' | 'large_order_cluster' | 'custom_price_change' | 'sdk_series';
 export interface FootprintSettings {
     mode?: FootprintMode;
+    display?: FootprintDisplay;
+    aligned_mode?: AlignedFootprintMode;
+    aligned_show_bars?: boolean;
+    aligned_show_text?: boolean;
+    aligned_delta_bid_ask?: boolean;
     scaling?: FootprintScale;
     automatic_aggregation?: boolean;
     ticks_per_row?: number;
     show_bin_text?: boolean;
+    bin_text_threshold?: number;
     compact_mode?: boolean;
     compact_show_volume_profile?: boolean;
     wide_candle?: boolean;
@@ -41,6 +49,58 @@ export interface ChartConfiguration {
     timeframe_seconds: number;
     chart_type: ChartType;
     footprint?: FootprintSettings;
+}
+export type CandleIndicatorId = 'sma' | 'ema' | 'rsi' | 'macd' | 'bollinger_bands' | 'kdj' | 'atr' | 'session_vwap' | 'volume' | 'volume_delta' | 'cvd';
+export interface IndicatorDataOptions {
+    from?: number;
+    to?: number;
+    limit?: number;
+}
+export interface IndicatorDataContext<T extends CandleIndicatorId | 'enhanced_chip_peak'> {
+    symbol: string;
+    exchange: string;
+    timeframe_seconds: number;
+    indicator: T;
+    source: 'chart' | 'default';
+}
+export interface CandleIndicatorPoint {
+    unix: number;
+    final: boolean;
+    values: Record<string, number | null>;
+}
+export interface CandleIndicatorData<T extends CandleIndicatorId = CandleIndicatorId> extends IndicatorDataContext<T> {
+    kind: 'time_series';
+    points: CandleIndicatorPoint[];
+}
+export interface EnhancedChipPeakRow {
+    price_low: number;
+    price_high: number;
+    buy_volume: number;
+    sell_volume: number;
+    unknown_volume: number;
+    volume: number;
+    delta: number;
+    retained_volume: number;
+    large_volume: number;
+}
+export interface EnhancedChipPeakProfile {
+    from: number;
+    last_unix: number;
+    lookback_bars: number;
+    candle_count: number;
+    ticks_per_row: number;
+    large_percentile: number;
+    poc_price_low: number;
+    poc_price_high: number;
+    value_area_low: number;
+    value_area_high: number;
+    total_volume: number;
+    large_print_percent: number | null;
+    rows: EnhancedChipPeakRow[];
+}
+export interface EnhancedChipPeakData extends IndicatorDataContext<'enhanced_chip_peak'> {
+    kind: 'price_profile';
+    profile: EnhancedChipPeakProfile | null;
 }
 export interface Trade {
     timestamp_ms: number;
@@ -371,6 +431,8 @@ export class MarsoonChart extends EventTarget {
     configure(configuration: ChartConfiguration, generation?: number): this;
     setTimeframe(seconds: number): this;
     setFootprintSettings(settings: FootprintSettings): this;
+    getIndicatorData<T extends CandleIndicatorId>(indicator: T, options?: IndicatorDataOptions): Promise<CandleIndicatorData<T>>;
+    getIndicatorData(indicator: 'enhanced_chip_peak'): Promise<EnhancedChipPeakData>;
     setLayerOrder(paneIndex: number, frontToBack: ChartLayerId[]): this;
     createSeries(series: QuantSeriesConfig): this;
     updateSeries(series: QuantSeriesConfig): this;
